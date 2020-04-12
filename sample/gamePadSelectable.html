@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GamePad sample</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+
+  <body id="root">
+    <article>
+      <h1>GamePad Basic Sample ( with gamepad selector )</h1>
+      <div class="gamepad-state">
+        <p id="connecting-label">
+          🎮 Wait for connecting...
+          (If the gamepad is not detected, try to pressing the button)
+        </p>
+      </div>
+      <div class="gamepad-state">
+        🎮
+        Select a gamepad <select id="gamepads" class="gamepad-select"></select>
+      </div>
+
+      <h2>Button States</h2>
+      <div class="console-outer">
+        <div id="button-console" class="console">
+        </div>
+      </div>
+
+      <h2>Axis States</h2>
+      <div class="console-outer">
+        <div id="axis-console" class="console">
+        </div>
+      </div>
+    </article>
+
+    <footer>
+      <p>garakuta-toolbox</p>
+      <p>Author: piyoppi</p>
+      <a href="https://garakuta-toolbox.com">HP</a>
+      <a href="https://github.com/piyoppi">GitHub(@piyoppi)</a>
+      <a href="https://twitter.com/piyorinpa">Twitter(@piyorinpa)</a>
+    </footer>
+
+    <script type="module">
+      const buttonConsoleElement = document.getElementById('button-console');
+      const axisConsoleElement = document.getElementById('axis-console');
+
+      import { GamePads } from '../src/main.js';
+
+      const gamePads = new GamePads();
+
+      const gamePadListElem = document.getElementById('gamepads');
+      const buildGamePadSelector = () => {
+        gamePadListElem.innerHTML = '';
+
+        // Build gamepad list
+        gamePads.pads.forEach( item => {
+          const padItemElem = document.createElement('option');
+          padItemElem.setAttribute('value', item.index);
+          padItemElem.innerText = item.gamepad.id;
+          gamePadListElem.appendChild(padItemElem);
+        });
+      };
+
+      gamePadListElem.onchange = async (e) => {
+        // Stop capturing
+        await gamePads.stop();
+        // Setup selected gamepad
+        await gamePads.setIndex(parseInt(e.target.value));
+        // Clear console
+        buttonConsoleElement.innerText = '';
+        axisConsoleElement.innerText = '';
+        
+        // Restart capturing
+        gamePads.capture();
+      };
+
+      gamePads.addEventHandler('connected', async (e) => {
+        document.getElementById('connecting-label').innerText = `✅ connected ${e.gamepad.id}`;
+        buildGamePadSelector();
+
+        await gamePads.setFirstPad();
+
+        // Start capturing
+        gamePads.capture();
+
+        gamePads.addEventHandler('buttonChanged', e => {
+          buttonConsoleElement.innerText = `Button ${e.index} : ${e.value.pressed} \n` + buttonConsoleElement.innerText;
+        });
+        gamePads.addEventHandler('axisChanged', e => {
+          axisConsoleElement.innerText = `Axis ${e.index} : ${e.value} \n` + axisConsoleElement.innerText;
+        });
+      });
+    </script>
+  </body>
+</html>
