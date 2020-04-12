@@ -1,7 +1,7 @@
 {
-  "name": "@piyoppi/gamepad-playground",
+  "name": "@piyoppi/picopico-pad",
   "version": "0.0.1",
-  "description": "gamepad api playground",
+  "description": "Gamepad Api helper library (capturing + key-mapping)",
   "main": "src/main.js",
   "scripts": {
     "test": "jest -i"
