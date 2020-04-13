@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GamePad sample (Key-mapping)</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+
+  <body id="root">
+    <article>
+      <h1>KeyMapping Sample</h1>
+      <div class="gamepad-state">
+        <p id="connecting-label">
+          🎮 Wait for connecting...
+          (If the gamepad is not detected, try to pressing the button)
+        </p>
+      </div>
+
+      <h2>Button States</h2>
+      <div class="console-outer">
+        <div id="button-console" class="console">
+        </div>
+      </div>
+
+      <h2>Axis States</h2>
+      <div class="console-outer">
+        <div id="axis-console" class="console">
+        </div>
+      </div>
+    </article>
+
+    <footer>
+      <p>garakuta-toolbox</p>
+      <p>Author: piyoppi</p>
+      <a href="https://garakuta-toolbox.com">HP</a>
+      <a href="https://github.com/piyoppi">GitHub(@piyoppi)</a>
+      <a href="https://twitter.com/piyorinpa">Twitter(@piyorinpa)</a>
+    </footer>
+
+    <script type="module">
+      import { GamePads } from '../src/main.js';
+      import { GamePadMapper, keyType } from '../src/padMapper.js';
+
+      // Key-mapping array
+      // 
+      // name: the name of key
+      // type: a type of key (button or axis)
+      // index: button(axis) index
+      const keys = [
+        { name: 'buttonA', type: keyType.button, index: 0 },
+        { name: 'buttonB', type: keyType.button, index: 1 },
+        { name: 'buttonC', type: keyType.button, index: 2 },
+        { name: 'buttonD', type: keyType.button, index: 3 },
+        { name: 'axis-x', type: keyType.axis, index: 0 },
+        { name: 'axis-y', type: keyType.axis, index: 1 }
+      ];
+
+      const gamePads = new GamePads();
+
+      // give a GamePad and key-mapping informations
+      const padMapper = new GamePadMapper(gamePads, keys);
+
+      gamePads.addEventHandler('connected', async (e) => {
+        document.getElementById('connecting-label').innerText = `✅ connected ${e.gamepad.id}`;
+        await gamePads.setFirstPad();
+
+        gamePads.capture();
+
+        const buttonConsoleElement = document.getElementById('button-console');
+        padMapper.addEventHandler('buttonChanged', e => {
+          buttonConsoleElement.innerText = `Button ${e.index} | ${e.name} | ${e.value.pressed} \n` + buttonConsoleElement.innerText;
+        });
+        const axisConsoleElement = document.getElementById('axis-console');
+        padMapper.addEventHandler('axisChanged', e => {
+          axisConsoleElement.innerText = `Axis ${e.index} | ${e.name} | ${e.value} \n` + axisConsoleElement.innerText;
+        });
+      });
+    </script>
+  </body>
+</html>
