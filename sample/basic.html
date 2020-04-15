@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GamePad sample</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+
+  <body id="root">
+    <article>
+      <h1>GamePad Basic Sample</h1>
+      <div class="gamepad-state">
+        <p id="connecting-label">
+          🎮 Wait for connecting...
+          (If the gamepad is not detected, try to pressing the button)
+        </p>
+      </div>
+
+      <h2>Button States</h2>
+      <div class="console-outer">
+        <div id="button-console" class="console">
+        </div>
+      </div>
+
+      <h2>Axis States</h2>
+      <div class="console-outer">
+        <div id="axis-console" class="console">
+        </div>
+      </div>
+    </article>
+
+    <footer>
+      <p>garakuta-toolbox</p>
+      <p>Author: piyoppi</p>
+      <a href="https://garakuta-toolbox.com">HP</a>
+      <a href="https://github.com/piyoppi">GitHub(@piyoppi)</a>
+      <a href="https://twitter.com/piyorinpa">Twitter(@piyorinpa)</a>
+    </footer>
+
+    <script type="module">
+      import { GamePads } from '../src/main.js';
+
+      const gamePads = new GamePads();
+
+      gamePads.addEventHandler('connected', async (e) => {
+        document.getElementById('connecting-label').innerText = `✅ connected ${e.gamepad.id}`;
+        await gamePads.setFirstPad();
+
+        gamePads.capture();
+
+        const buttonConsoleElement = document.getElementById('button-console');
+        gamePads.addEventHandler('buttonChanged', e => {
+          buttonConsoleElement.innerText = `Button ${e.index} : ${e.value.pressed} \n` + buttonConsoleElement.innerText;
+        });
+        const axisConsoleElement = document.getElementById('axis-console');
+        gamePads.addEventHandler('axisChanged', e => {
+          axisConsoleElement.innerText = `Axis ${e.index} : ${e.value} \n` + axisConsoleElement.innerText;
+        });
+      });
+    </script>
+  </body>
+</html>

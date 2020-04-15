@@ -1,0 +1,65 @@
+article {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+
+footer {
+  border: solid gainsboro;
+  border-width: 1px 0 0 0;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  font-size: 9pt;
+}
+
+button {
+  border-style: solid;
+  border-color: #204675;
+  border-width: 1px 3px 3px 1px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #407ac2;
+  color: white;
+  margin: 3px;
+  cursor: pointer;
+}
+
+.gamepad-state {
+  background-color: whitesmoke;
+  padding: 10px 30px;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.gamepad-select {
+  padding: 10px;
+  border: 1px solid gainsboro;
+  border-radius: 3px;
+  margin: 0 20px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+tr {
+  border: solid black;
+  border-width: 1px 0 0 0;
+}
+
+td, th {
+  padding: 3px 20px;
+}
+
+tr:last-child {
+  border-width: 1px 0 1px 0;
+}
+
+.console-outer {
+  overflow-y: scroll;
+  height: 300px;
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 10px;
+}
