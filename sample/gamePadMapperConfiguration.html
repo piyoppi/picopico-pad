@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GamePad Configuration</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+
+  <body id="root">
+    <article>
+      <h1>GamePad Configuration</h1>
+      <div class="gamepad-state">
+        <p id="connecting-label">
+          🎮 Wait for connecting...
+          (If the gamepad is not detected, try to pressing the button)
+        </p>
+      </div>
+
+      <div class="gamepad-state">
+        🎮
+        Select a gamepad <select id="gamepads" class="gamepad-select"></select>
+      </div>
+
+      <p>It will be displayed in the following table when you press any buttons or tilt any sticks.</p>
+      <button id="capture" class="capture-button">Setup all keys</button>
+      <button id="stop">Cancel</button>
+      <div id="key-mapper">
+        <table>
+          <tr>
+            <th></th>
+            <th>Key</th>
+            <th>Button / Axis Index</th>
+            <th style="width: 80px;">State</th>
+            <th></th>
+          </th>
+          <tr>
+            <td id="cursor0"></td>
+            <td>button-1</td>
+            <td id="key-button-1">0</td>
+            <td id="state-button-1"></td>
+            <td><button id="setup-button-1">Set</button></td>
+          </tr>
+          <tr>
+            <td id="cursor1"></td>
+            <td>button-2</td>
+            <td id="key-button-2">1</td>
+            <td id="state-button-2"></td>
+            <td><button id="setup-button-2">Set</button></td>
+          </tr>
+          <tr>
+            <td id="cursor2"></td>
+            <td>button-3</td>
+            <td id="key-button-3">2</td>
+            <td id="state-button-3"></td>
+            <td><button id="setup-button-3">Set</button></td>
+          </tr>
+          <tr>
+            <td id="cursor3"></td>
+            <td>button-4</td>
+            <td id="key-button-4">3</td>
+            <td id="state-button-4"></td>
+            <td><button id="setup-button-4">Set</button></td>
+          </tr>
+          <tr>
+            <td id="cursor4"></td>
+            <td>axis-x</td>
+            <td id="key-axis-x">0</td>
+            <td id="state-axis-x"></td>
+            <td><button id="setup-axis-x">Set</button></td>
+          </tr>
+          <tr>
+            <td id="cursor5"></td>
+            <td>axis-y</td>
+            <td id="key-axis-y">1</td>
+            <td id="state-axis-y"></td>
+            <td><button id="setup-axis-y">Set</button></td>
+          </tr>
+        </table>
+      </div>
+    </article>
+
+    <footer>
+      <p>garakuta-toolbox</p>
+      <p>Author: piyoppi</p>
+      <a href="https://garakuta-toolbox.com">HP</a>
+      <a href="https://github.com/piyoppi">GitHub(@piyoppi)</a>
+      <a href="https://twitter.com/piyorinpa">Twitter(@piyorinpa)</a>
+    </footer>
+
+    <script type="module">
+      import { GamePads } from '../src/main.js';
+      import { GamePadMapper, keyType } from '../src/padMapper.js';
+
+      // Initial key-mapping
+      const keys = [
+        { name: 'button-1', type: keyType.button, index: 0 },
+        { name: 'button-2', type: keyType.button, index: 1 },
+        { name: 'button-3', type: keyType.button, index: 2 },
+        { name: 'button-4', type: keyType.button, index: 3 },
+        { name: 'axis-x', type: keyType.axis, index: 0 },
+        { name: 'axis-y', type: keyType.axis, index: 1 }
+      ];
+
+      const gamePads = new GamePads();
+      const padMapper = new GamePadMapper(gamePads, keys);
+
+      const gamePadListElem = document.getElementById('gamepads');
+      const buildGamePadSelector = () => {
+        gamePadListElem.innerHTML = '';
+
+        // Generate gamepads selector
+        gamePads.pads.forEach( item => {
+          const padItemElem = document.createElement('option');
+          padItemElem.setAttribute('value', item.index);
+          padItemElem.innerText = item.gamepad.id;
+          gamePadListElem.appendChild(padItemElem);
+        });
+      };
+
+      gamePadListElem.onchange = async (e) => {
+        await gamePads.stop();
+        await gamePads.setIndex(parseInt(e.target.value));
+        gamePads.capture();
+      };
+
+      const captureButton = document.getElementById('capture');
+      const stopButton = document.getElementById('stop');
+      stopButton.style.display = 'none';
+
+      // Cancel key-mapping
+      stopButton.addEventListener('click', () => {
+        padMapper.stop();
+      });
+
+      // Set event hander to each buttons
+      keys.map(key => key.name).forEach(keyName => {
+        const targetButton = document.getElementById(`setup-${keyName}`);
+        targetButton.addEventListener('click', async () => {
+          await padMapper.register(keyName);
+        });
+      });
+
+      // Show the result of key mappings
+      padMapper.addEventHandler('applied', e => {
+        document.getElementById(`key-${e.name}`).innerText = e.index;
+      });
+
+      gamePads.addEventHandler('connected', async (e) => {
+        document.getElementById('connecting-label').innerText = `✅ connected ${e.gamepad.id}`;
+        buildGamePadSelector();
+
+        // Select using a gamepad
+        await gamePads.setFirstPad();
+
+        gamePads.capture();
+
+        captureButton.addEventListener('click', () => {
+          console.log('capturing');
+          padMapper.resetStepBy();
+          padMapper.registerAll();
+          stopButton.style.display = '';
+          captureButton.style.display = 'none';
+        });
+
+        padMapper.addEventHandler('buttonChanged', e => {
+          console.log(`Button ${e.index} ${e.name} : ${e.value.pressed}`);
+          if( e.value.pressed ) {
+            document.getElementById(`state-${e.name}`).innerText = '💡';
+          } else {
+            document.getElementById(`state-${e.name}`).innerText = '  ';
+          }
+        });
+        padMapper.addEventHandler('axisChanged', e => {
+          console.log(`Axis ${e.index} ${e.name} : ${e.value}`);
+          document.getElementById(`state-${e.name}`).innerText = Math.round(e.value * 1000.0) / 1000.0;
+        });
+      });
+
+      padMapper.addEventHandler('cursorChanged', e => {
+        keys.forEach((_key, index) => {
+          document.getElementById(`cursor${index}`).innerText = '';
+        });
+        if( e.cursor >= 0 ) document.getElementById(`cursor${e.cursor}`).innerText = '👉';
+      });
+
+      padMapper.addEventHandler('registerCompleted', e => {
+        console.log('captured');
+        stopButton.style.display = 'none';
+        captureButton.style.display = '';
+      });
+    </script>
+  </body>
+</html>
