@@ -6,6 +6,9 @@
   "scripts": {
     "test": "jest -i"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "piyoppi",
   "license": "MIT",
   "devDependencies": {
