@@ -1,6 +1,6 @@
-import { GamePads, captureState } from './../src/main.js'
-import { RequestAnimationFrameHelper } from './requestAnimationFrameHelper.js'
-import { GamePadsTestHelper, pressedButtonState } from './gamePadsHelper.js'
+import { GamePads, captureState } from './../src/main.js';
+import { RequestAnimationFrameHelper } from './requestAnimationFrameHelper.js';
+import { GamePadsTestHelper, pressedButtonState } from './gamePadsHelper.js';
 
 function createGamePads() {
   const gamePads = new GamePads();

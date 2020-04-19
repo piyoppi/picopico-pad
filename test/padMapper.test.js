@@ -1,5 +1,4 @@
-import { GamePads, captureState } from './../src/main.js'
-import { GamePadMapper, keyType } from './../src/padMapper.js'
+import { GamePads, captureState, GamePadMapper, keyType } from './../src/main.js'
 import { RequestAnimationFrameHelper } from './requestAnimationFrameHelper.js'
 import { GamePadsTestHelper } from './gamePadsHelper.js'
 

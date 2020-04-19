@@ -1,8 +1,5 @@
-const captureState = {
-  ready: 0,
-  capturing: 1,
-  waitForStop: 2
-}
+import { captureState } from './captureState.js';
+import { keyType } from './keyType.js';
 
 const stepCaptureState = {
   ready: 0,
@@ -10,11 +7,6 @@ const stepCaptureState = {
   completed: 2,
   waitForStop: 3,
   aborted: 4
-}
-
-export const keyType = {
-  button: 0,
-  axis: 1
 }
 
 export class GamePadMapper {
