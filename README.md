@@ -10,7 +10,7 @@ The following sample code detects a change of gamepad status.
 [Sample](https://piyoppi.github.io/picopico-pad/sample/basic.html)
 
 ```js
-import { GamePads } from './src/main.js';
+import { GamePads } from '@piyoppi/picopico-pad';
 
 const gamePads = new GamePads();
 
@@ -41,7 +41,7 @@ The following sample code can select a gamepad.
 [Sample](https://piyoppi.github.io/picopico-pad/sample/gamePadSelectable.html)
 
 ```js
-import { GamePads } from '../src/main.js';
+import { GamePads } from '@piyoppi/picopico-pad';
 
 const gamePads = new GamePads();
 
@@ -97,8 +97,7 @@ The following sample code name each buttons (or axes).
 [Sample](https://piyoppi.github.io/picopico-pad/sample/gamePadMapper.html)
 
 ```js
-import { GamePads } from '../src/main.js';
-import { GamePadMapper, keyType } from '../src/padMapper.js';
+import { GamePads, GamePadMapper, keyType } from '@piyoppi/picopico-pad';
 
 // Button-mapping array
 //
@@ -140,8 +139,7 @@ The following sample code configure key-mapping.
 [Sample](https://piyoppi.github.io/picopico-pad/sample/gamePadMapperConfiguration.html)
 
 ```js
-import { GamePads } from '../src/main.js';
-import { GamePadMapper, keyType } from '../src/padMapper.js';
+import { GamePads, GamePadMapper, keyType } from '@piyoppi/picopico-pad';
 
 // Initial key-mapping
 const keys = [
